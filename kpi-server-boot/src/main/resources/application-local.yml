@@ -1,0 +1,12 @@
+application:
+  kpi:
+    safety-net:
+      simulate.enabled: true
+    device-check:
+      simulate.enabled: true
+    statistics:
+      batching:
+        enabled: false
+        cron: 0 */5 * * * ?
+
+        

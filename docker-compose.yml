@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+
+  backend:
+    image: radarcovid/kpi
+    build:
+      context: ./kpi-server-boot/target/docker
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL_KPI: jdbc:postgresql://postgres:5432/RADARCOVID?schema=kpi
+      DATABASE_USER_KPI: radarcovid
+      DATABASE_PSW_KPI: radarcovid
+      DATABASE_SCHEMA_KPI: kpi
+      DATABASE_URL_VERIFICATION: jdbc:postgresql://postgres:5432/RADARCOVID?schema=verification
+      DATABASE_USER_VERIFICATION: radarcovid
+      DATABASE_PSW_VERIFICATION: radarcovid
+      DATABASE_SCHEMA_VERIFICATION: verification
+      REDIS_HOST: redis
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - 8080:8080
+    networks:
+      service:
+      persistence:
+
+  postgres:
+    image: postgres:12-alpine
+    environment:
+      TZ: Europe/Madrid
+      POSTGRES_DB: RADARCOVID
+      POSTGRES_USER: radarcovid
+      POSTGRES_PASSWORD: radarcovid
+      POSTGRES_SCHEMA: public
+    volumes:
+      - ./sql/:/docker-entrypoint-initdb.d/
+    ports:
+      - 5432:5432
+    networks:
+      persistence:
+        aliases:
+          - postgres
+          
+  redis:
+    image: redis:6-alpine
+    ports:
+      - 6379:6379
+    networks:
+      persistence:
+        aliases:
+          - redis
+
+networks:
+  service:
+  persistence:

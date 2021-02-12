@@ -1,0 +1,48 @@
+logging:
+  level:
+    root: info
+    es.gob.radarcovid: debug
+
+spring:
+  datasource-kpi:
+    url: jdbc:tc:postgresql:12:///
+    username: radarcovid
+    password: radarcovid
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    initialization-mode: always
+
+  jpa-kpi:
+    properties:
+      hibernate:
+        default_schema: kpi
+        
+  datasource-verification:
+    url: jdbc:tc:postgresql:12:///
+    username: radarcovid
+    password: radarcovid
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    initialization-mode: always
+
+  jpa-verification:
+    properties:
+      hibernate:
+        default_schema: verification
+
+cloud:
+  aws:
+    region:
+      auto: false
+      static: eu-west-1
+    stack:
+      auto: false
+
+application:
+  log.enabled: false
+
+test:
+  safety-net-certs:
+    trust-store: classpath:safetynet/safetynet-kpi.jks
+    private-key: classpath:safetynet/dummy.key
+    certificate: classpath:safetynet/dummy.crt
+    algorithm: RSA
+  

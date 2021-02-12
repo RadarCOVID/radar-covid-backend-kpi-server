@@ -1,0 +1,206 @@
+server:
+  port: ${SERVER_PORT:8080}
+  compression:
+    enabled: true
+    mime-types:
+      - application/json
+      - application/xml
+      - text/xml
+      - text/css
+      - text/plain
+  http2.enabled: true
+  servlet.context-path: ${CONTEXT_PATH:}
+  shutdown: graceful
+
+management:
+  endpoints:
+    enabled-by-default: ${MANAGEMENT_ENDPOINTS_ENABLED:true}
+    web.exposure.include: '*'
+  server.port: ${MANAGEMENT_PORT:-1}
+  endpoint:
+    health.probes.enabled: true
+  metrics:
+    export:
+      cloudwatch:
+        enabled: ${AWS_METRICS_ENABLED:false}
+        namespace: kpi
+        batch-size: 20
+        step: ${AWS_METRICS_STEP:5m}
+
+spring:
+  application:
+    name: kpi
+  lifecycle:
+    timeout-per-shutdown-phase: ${LIFECYCLE_TIMEOUT_PER_SHUTDOWN_PHASE:20s}
+  datasource-kpi:
+    initialization-mode: never
+    continue-on-error: false
+    url: ${DATABASE_URL_KPI:jdbc:postgresql://localhost:5432/RADARCOVID?schema=kpi}
+    username: ${DATABASE_USER_KPI:radarcovid}
+    password: ${DATABASE_PSW_KPI:radarcovid}
+    hikari:
+      minimumIdle: ${DATABASE_MIN_IDLE_KPI:5}
+      maximumPoolSize: ${DATABASE_MAX_IDLE_KPI:20}
+      connectionTimeout: ${DATABASE_CONNECTION_TIMEOUT_KPI:20000}
+  jpa-kpi:
+    hibernate:
+      ddl-auto: none
+      generate-ddl: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc.lob.non_contextual_creation: true
+        default_schema: ${DATABASE_SCHEMA_KPI:kpi}
+  datasource-verification:
+    initialization-mode: never
+    continue-on-error: false
+    url: ${DATABASE_URL_VERIFICATION:jdbc:postgresql://localhost:5432/RADARCOVID?schema=verification}
+    username: ${DATABASE_USER_VERIFICATION:radarcovid}
+    password: ${DATABASE_PSW_VERIFICATION:radarcovid}
+    hikari:
+      minimumIdle: ${DATABASE_MIN_IDLE_VERIFICATION:5}
+      maximumPoolSize: ${DATABASE_MAX_IDLE_VERIFICATION:20}
+      connectionTimeout: ${DATABASE_CONNECTION_TIMEOUT_VERIFICATION:20000}
+      isReadOnly: true
+  jpa-verification:
+    hibernate:
+      ddl-auto: none
+      generate-ddl: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc.lob.non_contextual_creation: true
+        default_schema: ${DATABASE_SCHEMA_VERIFICATION:verification}
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PSW:}
+    timeout: ${REDIS_CONNECTION_TIMEOUT:20000}
+    lettuce:
+      cluster:
+        refresh:
+          period: ${REDIS_REFRESH_PERIOD:PT30M}
+          adaptive: ${REDIS_REFRESH_ADAPTIVE:true}
+
+springdoc:
+  api-docs:
+    path: /openapi/api-docs
+    enabled: ${OPENAPI_ENABLED:true}
+  swagger-ui:
+    path: /openapi/ui
+    enabled: ${OPENAPI_ENABLED:true}
+
+application:
+  cache:
+    prefix-name: ${CACHE_PREFIX_NAME:kpi}
+    enabled: ${CACHE_ENABLED:true}
+    time-to-live:
+      default: ${CACHE_TIME_TO_LIVE:PT30M}
+      authentication: ${CACHE_TIME_TO_LIVE_AUTHENTICATION:P7D}
+  log.enabled: ${LOGGABLE_ENABLED:true}
+  openapi:
+    title: '@project.name@'
+    description: '@project.description@'
+    version: '@project.version@'
+    terms-of-service: https://radarcovid.covid19.gob.es/terms-of-service/use-conditions.html
+    security:
+      enabled: ${OPENAPI_SECURITY_ENABLED:true}
+  jwt:
+    issuer: ${JWT_RADAR_ISSUER:sedia-radarcovid}
+    minutes: ${JWT_MINUTES_EXPIRATION:15}
+  credentials:
+      privateKey: ${CREDENTIALS_PRIVATE_KEY:LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JSHVBZ0VBTUJBR0J5cUdTTTQ5QWdFR0JTdUJCQUFqQklIV01JSFRBZ0VCQkVJQkEvVmRTM21lWEFkQ0ZhdmoKQ2t4dGxPbnErT1lNSUlHQVlSQW9vYnRCRDdpV2ZhT2xYZ1UvaU9mdVRjaG5GZ0txR1dSUGZJeUVFcmp3OEcrZQppbGJQSGlDaGdZa0RnWVlBQkFGdkF5bXl5bE00UEVnaFg5SzZXV0JMaE5OamNCVi9ycjVvZlpVSlpsb0xlTG1pCkIrcWpZNUVnSkNGOGJyVEJVUE81S01FRWhtTHJXWlhBRExtcXRNb2R1Z0RFTFdLdHVjeGZ5aVJENXFOOFliL2cKOHl2Mk9GT29tT0xkeThMSTNVQi9vUi91QW5OY3BGcGQrNXFzdE14UitoWnhiWWhpa1QyMDBpemNjdDgrRGNldQpJUT09Ci0tLS0tRU5EIFBSSVZBVEUgS0VZLS0tLS0K}
+      publicKey: ${CREDENTIALS_PUBLIC_KEY:LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUlHYk1CQUdCeXFHU000OUFnRUdCU3VCQkFBakE0R0dBQVFCYndNcHNzcFRPRHhJSVYvU3VsbGdTNFRUWTNBVgpmNjYrYUgyVkNXWmFDM2k1b2dmcW8yT1JJQ1FoZkc2MHdWRHp1U2pCQklaaTYxbVZ3QXk1cXJUS0hib0F4QzFpCnJibk1YOG9rUSthamZHRy80UE1yOWpoVHFKamkzY3ZDeU4xQWY2RWY3Z0p6WEtSYVhmdWFyTFRNVWZvV2NXMkkKWXBFOXROSXMzSExmUGczSHJpRT0KLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==}
+      algorithm: ${CREDENTIALS_ALGORITHM:EC}
+  kpi:
+    safety-net:
+      time-skew: PT10m
+      package-name: es.gob.radarcovid
+      apk-digest: ${SAFETYNET_APK_DIGEST:}
+    device-check:
+      credentials:
+        private-key: ${DEVICE_CHECK_PRIVATE_KEY:LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JSHVBZ0VBTUJBR0J5cUdTTTQ5QWdFR0JTdUJCQUFqQklIV01JSFRBZ0VCQkVJQkEvVmRTM21lWEFkQ0ZhdmoKQ2t4dGxPbnErT1lNSUlHQVlSQW9vYnRCRDdpV2ZhT2xYZ1UvaU9mdVRjaG5GZ0txR1dSUGZJeUVFcmp3OEcrZQppbGJQSGlDaGdZa0RnWVlBQkFGdkF5bXl5bE00UEVnaFg5SzZXV0JMaE5OamNCVi9ycjVvZlpVSlpsb0xlTG1pCkIrcWpZNUVnSkNGOGJyVEJVUE81S01FRWhtTHJXWlhBRExtcXRNb2R1Z0RFTFdLdHVjeGZ5aVJENXFOOFliL2cKOHl2Mk9GT29tT0xkeThMSTNVQi9vUi91QW5OY3BGcGQrNXFzdE14UitoWnhiWWhpa1QyMDBpemNjdDgrRGNldQpJUT09Ci0tLS0tRU5EIFBSSVZBVEUgS0VZLS0tLS0K}
+        public-key: ${DEVICE_CHECK_PUBLIC_KEY:LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUlHYk1CQUdCeXFHU000OUFnRUdCU3VCQkFBakE0R0dBQVFCYndNcHNzcFRPRHhJSVYvU3VsbGdTNFRUWTNBVgpmNjYrYUgyVkNXWmFDM2k1b2dmcW8yT1JJQ1FoZkc2MHdWRHp1U2pCQklaaTYxbVZ3QXk1cXJUS0hib0F4QzFpCnJibk1YOG9rUSthamZHRy80UE1yOWpoVHFKamkzY3ZDeU4xQWY2RWY3Z0p6WEtSYVhmdWFyTFRNVWZvV2NXMkkKWXBFOXROSXMzSExmUGczSHJpRT0KLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==}
+        algorithm: ${DEVICE_CHECK_ALGORITHM:EC}
+      team-id: ${DEVICE_CHECK_TEAM_ID:}
+      key-id: ${DEVICE_CHECK_KEY_ID:}
+      host: ${DEVICE_CHECK_HOST:https://api.development.devicecheck.apple.com}
+      endpoints:
+        query: ${application.kpi.device-check.host}/v1/query_two_bits
+        update: ${application.kpi.device-check.host}/v1/update_two_bits
+        validate: ${application.kpi.device-check.host}/v1/validate_device_token
+    statistics:
+      ccaa-diagnosis-csv: https://cnecovid.isciii.es/covid19/resources/casos_diag_ccaadecl.csv
+      batching:
+        enabled: ${KPI_UPDATE_STATS_ENABLED:true}
+        cron: ${KPI_UPDATE_STATS_CRON:0 0 1 * * ?}
+        lock-limit: 1800000
+      data:
+        downloads:
+          title: Descargas Radar Covid
+          description: Número de descargas de la APP Radar Covid
+          included: 
+            downloads-total: Descargas de Radar Covid
+            downloads-month: Descargas mensuales de Radar Covid
+            downloads-week: Descargas semanales de Radar Covid
+            downloads-so: Descargas por sistema operativo
+        delivered-codes:
+          title: Códigos entegados a casos confirmados
+          description: Códigos entegados a casos confirmados
+          included: 
+            delivered-codes-total: Códigos entregados a casos confirmados
+            delivered-codes-accumulated: Acumulado códigos entregados
+            delivered-codes-confirmed: Acumulado códigos confirmados
+            delivered-codes-month: Codigos entregados a casos confirmados mensual
+            delivered-codes-week: Codigos entregados a casos confirmados semanal
+        ratio-delivered-codes:
+          title: Ratio códigos entregados a casos confirmados
+          description: Ratio códigos entregados a casos confirmados
+          included: 
+            ratio-delivered-codes-accumulated: Ratio acumulado códigos entregados/confirmado
+            ratio-delivered-codes-month: Ratio codigos entregados a casos confirmados mensual
+            ratio-delivered-codes-week: Ratio codigos entregados a casos confirmados semanal
+            ratio-delivered-codes-accumulated-national-month: Ratio acumulado códigos solicitados/confirmado mensual nacional
+            ratio-delivered-codes-accumulated-national-week: Ratio acumulado códigos solicitados/confirmado semanal nacional
+        positives:
+          title: Casos positivos declarados en Radar Covid
+          description: Casos positivos declarados en Radar Covid
+          included: 
+            positives-total: Casos positivos declarados en Radar Covid
+            positives-month: Casos positivos declarados mensual
+            positives-week: Casos positivos declarados semanal
+        ccaa-positives:
+          title: Casos positivos declarados en Radar Covid
+          description: Casos positivos declarados en Radar Covid
+          included: 
+            ccaa-positives-total: Casos positivos declarados en Radar Covid
+            ccaa-positives-accumulated: Acumulado casos positivos
+            ccaa-positives-month: Casos positivos declarados mensual
+            ccaa-positives-week: Casos positivos declarados semanal
+        ratio-ccaa-positives:
+          title: Ratio positivos declarados a casos confirmados
+          description: Ratio positivos declarados a casos confirmados
+          included: 
+            ratio-ccaa-positives-accumulated: Ratio acumulado positivos declarados a casos confirmados
+            ratio-ccaa-positives-month: Ratio positivos declarados a casos confirmados mensual
+            ratio-ccaa-positives-week: Ratio positivos declarados a casos confirmados semanal
+            ratio-ccaa-positives-accumulated-national-month: Ratio acumulado positivos declarados a casos confirmados mensual nacional
+            ratio-ccaa-positives-accumulated-national-week: Ratio acumulado positivos declarados a casos confirmados semanal nacional
+            
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY_ID:}
+      secret-key: ${AWS_SECRET_KEY:}
+    region:
+      auto: false
+      static: eu-west-1
+    stack:
+      auto: false
+
+logging:
+  pattern.console: '[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} %c{1} - [%X{TRACKING}] [%X{X-B3-TraceId}] - %msg%n'
+  level:
+    root: info
+    es.gob.radarcovid: debug
+    com.amazonaws: error
