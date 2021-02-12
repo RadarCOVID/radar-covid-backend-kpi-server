@@ -30,5 +30,4 @@ All notable changes to this project will be documented in this file.
 - Radar statistics service: application downloads, delivered codes, positives communicated.
 
 [Unreleased]: https://github.com/RadarCOVID/radar-covid-backend-kpi-server/compare/1.3.0.RELEASE...develop
-[1.3.0.RELEASE]: https://github.com/RadarCOVID/radar-covid-backend-kpi-server/compare/1.2.0.RELEASE...1.3.0.RELEASE
-[1.2.0.RELEASE]: https://github.com/RadarCOVID/radar-covid-backend-kpi-server/releases/tag/1.2.0.RELEASE
+[1.3.0.RELEASE]: https://github.com/RadarCOVID/radar-covid-backend-kpi-server/releases/tag/1.3.0.RELEASE
