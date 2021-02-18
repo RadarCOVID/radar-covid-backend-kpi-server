@@ -58,5 +58,9 @@ public class KpiEntity implements Serializable {
 
 	@Column(name = "NM_SO_TYPE")
 	private Integer soType;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "FC_VALUE")
+	private Date dateValue;
 
 }

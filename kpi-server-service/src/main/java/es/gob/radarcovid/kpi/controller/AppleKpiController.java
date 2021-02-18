@@ -91,11 +91,11 @@ public class AppleKpiController {
 		MDC.put(Constants.TRACKING, "TOKEN_APPLE|DEVICE:" + StringUtils.abbreviate(appleKpiTokenRequestDto.getDeviceToken(), 48));
 		Optional<String> result = service.verifyToken(appleKpiTokenRequestDto.getDeviceToken());
         if (result.isPresent()) {
-            log.info("Token device is already authorized");
+            log.debug("Token device is already authorized");
             AppleKpiTokenResponseDto response = new AppleKpiTokenResponseDto(result.get());
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } else {
-        	log.warn("Token device is not authorized yet");
+        	log.debug("Token device is not authorized yet");
         	service.authenticateToken(appleKpiTokenRequestDto.getDeviceToken());
         	return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
         }

@@ -12,29 +12,37 @@ package es.gob.radarcovid.kpi.persistence.mapper;
 
 import java.util.Date;
 
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.Mappings;
 
 import es.gob.radarcovid.kpi.api.KpiDto;
 import es.gob.radarcovid.kpi.persistence.entity.KpiEntity;
 
-@Mapper(componentModel = "spring", imports = { Date.class })
-public interface KpiMapper {
+@Mapper(componentModel = "spring")
+public abstract class KpiMapper {
 
     @Mappings({
     	@Mapping(target = "kpi", source = "kpiType.name"),
     	@Mapping(target = "timestamp", ignore = true),
     	@Mapping(target = "soType", ignore = true)
     })
-    KpiDto asDto(KpiEntity entity);
+    public abstract KpiDto asDto(KpiEntity entity);
 
     @Mappings({
     	@Mapping(target = "id", ignore = true),
     	@Mapping(target = "kpiType", ignore = true),
+    	@Mapping(target = "createDate", ignore = true),
     	@Mapping(source = "soType.id", target = "soType"),
-		@Mapping(source = "timestamp", target = "createDate", defaultExpression = "java(new Date())")
+    	@Mapping(source = "timestamp", target = "dateValue")
     })
-    KpiEntity asEntity(KpiDto dto);
+    public abstract KpiEntity asEntity(KpiDto dto);
+    
+    @AfterMapping
+    protected void setInternalValues(KpiDto dto, @MappingTarget KpiEntity entity) {
+        entity.setCreateDate(new Date());
+    }
 
 }
