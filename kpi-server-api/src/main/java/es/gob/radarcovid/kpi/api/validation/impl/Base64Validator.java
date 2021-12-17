@@ -22,7 +22,7 @@ public class Base64Validator implements ConstraintValidator<Base64Constraint, St
 	public boolean isValid(String value, ConstraintValidatorContext context) {
 		try {
 			Base64.getDecoder().decode(value);
-		} catch (IllegalArgumentException e) {
+		} catch (Exception e) {
 			return false;
 		}
 		return true;
