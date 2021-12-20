@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.3.2.RELEASE] - 2021-12-20
+
+### Changed
+
+- Updated log4j2 version to 2.17.0
+
 ## [1.3.1.RELEASE] - 2021-12-17
 
 ### Changed
@@ -36,7 +42,8 @@ All notable changes to this project will be documented in this file.
 - Key Performance Indicator (KPI) service.
 - Radar statistics service: application downloads, delivered codes, positives communicated.
 
-[Unreleased]: https://github.com/RadarCOVID/radar-covid-backend-kpi-server/compare/1.3.1.RELEASE...develop
+[Unreleased]: https://github.com/RadarCOVID/radar-covid-backend-kpi-server/compare/1.3.2.RELEASE...develop
+[1.3.2.RELEASE]: https://github.com/RadarCOVID/radar-covid-backend-kpi-server/compare/1.3.1.RELEASE...1.3.2.RELEASE
 [1.3.1.RELEASE]: https://github.com/RadarCOVID/radar-covid-backend-kpi-server/compare/1.3.0.RELEASE...1.3.1.RELEASE
 [1.3.0.RELEASE]: https://github.com/RadarCOVID/radar-covid-backend-kpi-server/compare/1.2.0.RELEASE...1.3.0.RELEASE
 [1.2.0.RELEASE]: https://github.com/RadarCOVID/radar-covid-backend-kpi-server/releases/tag/1.2.0.RELEASE
